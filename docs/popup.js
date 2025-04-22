@@ -1,17 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Pomodoro durations (fallback defaults)
+  // -- your constants and state (unchanged) --
   const WORK_DUR    = 25 * 60;
   const SHORT_BREAK =  5 * 60;
   const LONG_BREAK  = 15 * 60;
+  let cycleCount = 0, mode = 'work';
+  let timeLeft = WORK_DUR;
+  let currentSessionDuration = WORK_DUR;
+  let timerId = null, isRunning = false;
+  let userCycleCount = 4;
 
-  let cycleCount             = 0;
-  let mode                   = 'work';
-  let timeLeft               = WORK_DUR;
-  let currentSessionDuration = WORK_DUR;  // ← new
-  let timerId                = null;
-  let isRunning              = false;
-  let userCycleCount         = 4;
-
+  // -- helpers --
   const $ = id => document.getElementById(id);
   function formatTime(sec) {
     const m = Math.floor(sec/60).toString().padStart(2,'0');
@@ -19,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${m}:${s}`;
   }
 
-  // DOM refs
+  // -- DOM refs --
   const startBtn    = $('start-pause-button');
   const skipBtn     = $('skip-button');
   const labelEl     = $('timer-label');
@@ -35,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cycleInput  = $('cycle-count');
   const upcomingUL  = $('upcoming-sessions-list');
 
-  // Progress ring setup
+  // -- progress ring setup --
   const radius        = circle.r.baseVal.value;
   const circumference = 2 * Math.PI * radius;
   circle.style.strokeDasharray  = `${circumference} ${circumference}`;
@@ -44,68 +42,64 @@ document.addEventListener('DOMContentLoaded', () => {
     circle.style.strokeDashoffset = circumference - (pct/100)*circumference;
   }
 
-  // Load audio...
+  // -- load audio via relative paths, NOT chrome.runtime --
   const ambientSounds = {
-    rain:   new Audio(chrome.runtime.getURL('sounds/rain.mp3')),
-    coffee: new Audio(chrome.runtime.getURL('sounds/coffee.mp3')),
-    white:  new Audio(chrome.runtime.getURL('sounds/white.mp3'))
+    rain:   new Audio('sounds/rain.mp3'),
+    coffee: new Audio('sounds/coffee.mp3'),
+    white:  new Audio('sounds/white.mp3')
   };
-  const notificationSound = new Audio(chrome.runtime.getURL('sounds/notification.mp3'));
-  Object.values(ambientSounds).forEach(a=>{ a.loop=true; a.volume=0.5; });
+  const notificationSound = new Audio('sounds/notification.mp3');
+  Object.values(ambientSounds).forEach(a => { a.loop = true; a.volume = 0.5; });
 
-  // Restore prefs...
-  chrome.storage.local.get(
-    ['ambientSel','ambientVol','notifSel','darkMode','cycleCount'],
-    res => {
-      if (res.ambientSel) ambientSel.value = res.ambientSel;
-      if (res.ambientVol!=null) ambientVol.value = res.ambientVol;
-      if (res.notifSel) notifSel.value = res.notifSel;
-      if (res.darkMode) document.body.classList.add('dark'), darkToggle.checked = true;
-      if (res.cycleCount) userCycleCount = res.cycleCount, cycleInput.value = res.cycleCount;
+  // -- restore user prefs from localStorage (PWA) --
+  const store = window.localStorage;
+  // ambientSel, ambientVol, notifSel, darkMode, cycleCount
+  if (store.ambientSel)    ambientSel.value = store.ambientSel;
+  if (store.ambientVol)    ambientVol.value = store.ambientVol;
+  if (store.notifSel)      notifSel.value = store.notifSel;
+  if (store.darkMode === 'true') {
+    document.body.classList.add('dark');
+    darkToggle.checked = true;
+  }
+  if (store.cycleCount) {
+    userCycleCount = parseInt(store.cycleCount,10);
+    cycleInput.value = userCycleCount;
+  }
 
-      ambientVol.dispatchEvent(new Event('input'));
-      ambientSel.dispatchEvent(new Event('change'));
-  });
+  // -- apply UI based on settings --
+  ambientVol.dispatchEvent(new Event('input'));
+  ambientSel.dispatchEvent(new Event('change'));
 
-  // Dark mode toggle...
+  // -- handlers for settings --
   darkToggle.addEventListener('change', e => {
     document.body.classList.toggle('dark', e.target.checked);
-    chrome.storage.local.set({ darkMode: e.target.checked });
+    store.darkMode = e.target.checked;
   });
-
-  // Cycle count input...
   cycleInput.addEventListener('change', e => {
-    const v = parseInt(e.target.value, 10);
+    const v = parseInt(e.target.value,10);
     if (v>0) {
       userCycleCount = v;
-      chrome.storage.local.set({ cycleCount: v });
+      store.cycleCount = v;
     }
   });
-
-  // Ambient volume...
   ambientVol.addEventListener('input', () => {
     const v = parseFloat(ambientVol.value);
     Object.values(ambientSounds).forEach(a=>a.volume=v);
-    chrome.storage.local.set({ ambientVol: v });
+    store.ambientVol = v;
   });
-
-  // Ambient sound select...
   ambientSel.addEventListener('change', () => {
-    Object.values(ambientSounds).forEach(a=>{ a.pause(); a.currentTime=0; });
+    Object.values(ambientSounds).forEach(a => { a.pause(); a.currentTime=0; });
     const sel = ambientSel.value;
     if (ambientSounds[sel]) ambientSounds[sel].play();
-    chrome.storage.local.set({ ambientSel: sel });
+    store.ambientSel = sel;
   });
-
-  // Notification select...
   notifSel.addEventListener('change', () => {
-    chrome.storage.local.set({ notifSel: notifSel.value });
+    store.notifSel = notifSel.value;
   });
 
-  // ── UI update ──
+  // -- UI update function --
   function updateUI() {
     displayEl.textContent = formatTime(timeLeft);
-    // ← use currentSessionDuration instead of static WORK_DUR
     const pct = ((currentSessionDuration - timeLeft) / currentSessionDuration) * 100;
     setProgress(pct);
     labelEl.textContent = mode === 'work'
@@ -115,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         : 'Long Break';
   }
 
-  // ── Advance to next session ──
+  // -- session advancement --
   function nextSession(auto=true) {
     clearInterval(timerId);
     isRunning = false;
@@ -128,9 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mode = 'work';
       timeLeft = WORK_DUR;
     }
-    // ← reset session duration here too
     currentSessionDuration = timeLeft;
-
     updateUI();
     startBtn.textContent = 'Start';
 
@@ -140,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ── Tick ──
+  // -- tick every second --
   function tick() {
     if (timeLeft > 0) {
       timeLeft--;
@@ -150,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ── Start/Pause ──
+  // -- start/pause logic --
   function startTimer() {
     if (!isRunning) {
       timerId = setInterval(tick, 1000);
@@ -163,72 +155,64 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ── Button handlers ──
+  // -- button wiring --
   startBtn.addEventListener('click', () => {
-    // pick custom vs preset
     if (presets.value === 'custom') {
       const m = parseInt(customInput.value, 10);
       if (m>0) {
-        timeLeft               = m * 60;
-        currentSessionDuration = timeLeft;  // ← set custom duration
-        mode                   = 'work';
+        timeLeft = m*60;
+        currentSessionDuration = timeLeft;
+        mode = 'work';
         updateUI();
       }
     } else {
       const secs = Number(presets.value);
       if (!isNaN(secs)) {
-        timeLeft               = secs;
-        currentSessionDuration = secs;      // ← set quick‐preset duration
-        mode                   = 'work';
+        timeLeft = secs;
+        currentSessionDuration = secs;
+        mode = 'work';
         updateUI();
       }
     }
     startTimer();
   });
+  skipBtn.addEventListener('click', ()=> nextSession(false));
 
-  skipBtn.addEventListener('click', () => nextSession(false));
-
-  // ── Quick presets load ──
+  // -- quick presets load/save --
   function loadPresets() {
-    chrome.storage.local.get('timerPresets', res => {
-      const arr = res.timerPresets || [5,10,17,25];
-      presets.innerHTML = '';
-      arr.forEach(m => presets.add(new Option(`${m} min`, m*60)));
-      presets.add(new Option('Custom','custom'));
-    });
+    const arr = JSON.parse(store.timerPresets || '[5,10,17,25]');
+    presets.innerHTML = '';
+    arr.forEach(m => presets.add(new Option(`${m} min`, m*60)));
+    presets.add(new Option('Custom','custom'));
   }
   presets.addEventListener('change', () => {
-    if (presets.value === 'custom') customInput.style.display = 'block';
-    else {
+    if (presets.value==='custom') {
+      customInput.style.display = 'block';
+    } else {
       customInput.style.display = 'none';
       const secs = Number(presets.value);
       if (!isNaN(secs)) {
-        timeLeft               = secs;
-        currentSessionDuration = secs;  // ← also set duration on change
+        timeLeft = secs;
+        currentSessionDuration = secs;
         updateUI();
       }
     }
   });
   savePreset.addEventListener('click', () => {
-    const m = parseInt(customInput.value, 10);
+    const m = parseInt(customInput.value,10);
     if (m>0) {
-      chrome.storage.local.get('timerPresets', res => {
-        const arr = res.timerPresets || [5,10,17,25];
-        if (!arr.includes(m)) {
-          arr.push(m);
-          chrome.storage.local.set({ timerPresets: arr });
-          loadPresets();
-        }
-      });
+      const arr = JSON.parse(store.timerPresets || '[5,10,17,25]');
+      if (!arr.includes(m)) {
+        arr.push(m);
+        store.timerPresets = JSON.stringify(arr);
+        loadPresets();
+      }
     }
   });
   loadPresets();
 
-  // ── Schedule & Calendar (unchanged) ──
-  $('add-schedule').addEventListener('click', () => {
-    /* … your existing scheduling + calendar code … */
-  });
+  // -- scheduling & calendar -- (leave your existing code here)
 
-  // Initial draw
+  // initial draw
   updateUI();
 });
