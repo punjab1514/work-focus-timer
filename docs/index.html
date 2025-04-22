@@ -1,27 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Work Focus Timer</title>
-
-  <!-- PWA manifest -->
-  <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="theme-color" content="#4caf50" />
-
-  <!-- Styles & Fonts -->
-  <link rel="stylesheet" href="popup.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="popup.css"/>
+  <link rel="manifest" href="manifest.webmanifest"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
 </head>
 <body>
   <div class="app-container">
+
     <!-- SESSION TIMER CARD -->
     <section id="sessions" class="card">
       <h2>My Sessions</h2>
       <div class="ring-container">
         <svg class="progress-ring" width="120" height="120">
-          <circle class="progress-ring__bg" stroke="#e6e6e6" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
-          <circle class="progress-ring__circle" stroke="#4caf50" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" stroke-linecap="round"/>
+          <circle class="progress-ring__bg" stroke="#e6e6e6" stroke-width="8"
+                  fill="transparent" r="52" cx="60" cy="60"/>
+          <circle class="progress-ring__circle" stroke="#4caf50" stroke-width="8"
+                  fill="transparent" r="52" cx="60" cy="60" stroke-linecap="round"/>
         </svg>
         <div id="timer-label" class="timer-label">Work</div>
         <div id="timer-display" class="timer-display">25:00</div>
@@ -39,25 +37,33 @@
     </section>
 
     <!-- UPCOMING SESSIONS CARD -->
-    <section id="upcoming-sessions-section" class="card">
+    <section class="card">
       <h2>Upcoming Sessions</h2>
       <ul id="upcoming-sessions-list" class="upcoming-list"></ul>
     </section>
 
     <!-- COLLAPSIBLE PANELS -->
-    <details class="accordion"><summary>Scheduling</summary>
+    <details class="accordion">
+      <summary>Scheduling</summary>
       <div class="detail-content">
         <label for="session-name">Session Name</label>
         <input type="text" id="session-name" placeholder="Enter session name"/>
         <div class="time-pair">
-          <div><label for="start-time">Start Time</label><input type="time" id="start-time"/></div>
-          <div><label for="end-time">End Time</label><input type="time" id="end-time"/></div>
+          <div>
+            <label for="start-time">Start Time</label>
+            <input type="time" id="start-time"/>
+          </div>
+          <div>
+            <label for="end-time">End Time</label>
+            <input type="time" id="end-time"/>
+          </div>
         </div>
         <button id="add-schedule" class="btn-primary">Save Schedule</button>
       </div>
     </details>
 
-    <details class="accordion"><summary>Productivity Insights</summary>
+    <details class="accordion">
+      <summary>Productivity Insights</summary>
       <div class="detail-content">
         <div id="stats-summary">
           <p>Today's Sessions: <strong id="stats-today">0</strong></p>
@@ -68,14 +74,16 @@
       </div>
     </details>
 
-    <details class="accordion"><summary>Session Notes</summary>
+    <details class="accordion">
+      <summary>Session Notes</summary>
       <div class="detail-content">
         <textarea id="notes-input" placeholder="Enter your session notes…"></textarea>
         <button id="save-note" class="btn-secondary">Save Note</button>
       </div>
     </details>
 
-    <details class="accordion"><summary>Website Blocker</summary>
+    <details class="accordion">
+      <summary>Website Blocker</summary>
       <div class="detail-content">
         <label><span>Block Facebook</span><input type="checkbox" id="block-facebook"/></label>
         <label><span>Block Twitter</span><input type="checkbox" id="block-twitter"/></label>
@@ -84,15 +92,19 @@
       </div>
     </details>
 
-    <details class="accordion"><summary>Settings</summary>
+    <details class="accordion">
+      <summary>Settings</summary>
       <div class="detail-content">
-        <label for="dark-mode-toggle">Dark Mode: <input type="checkbox" id="dark-mode-toggle"/></label>
+        <label for="dark-mode-toggle">Dark Mode:
+          <input type="checkbox" id="dark-mode-toggle"/>
+        </label>
         <label for="cycle-count">Cycles before long break:</label>
         <input type="number" id="cycle-count" min="1" value="4"/>
       </div>
     </details>
 
-    <details class="accordion"><summary>Ambient Sounds & Alerts</summary>
+    <details class="accordion">
+      <summary>Ambient Sounds & Alerts</summary>
       <div class="detail-content">
         <label for="ambient-select"><span>Focus Sound</span>
           <select id="ambient-select">
@@ -116,9 +128,6 @@
 
   </div>
 
-  <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-  </script>
   <script src="popup.js"></script>
 </body>
 </html>
