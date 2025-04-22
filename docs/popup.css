@@ -1,0 +1,149 @@
+/* Force popup width */
+html, body {
+  width: 360px !important;
+  margin: 0; padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+:root {
+  --card-bg: #ffffff;
+  --accent-bg: #f1f8e9;
+  --shadow: 0 2px 8px rgba(0,0,0,0.1);
+  --primary: #4caf50;
+  --border-radius: 8px;
+
+  /* dark theme */
+  --dark-bg: #2b2b2b;
+  --dark-card: #3c3c3c;
+  --dark-text: #ddd;
+}
+
+/* Dark mode toggle */
+body.dark {
+  background: var(--dark-bg);
+  color: var(--dark-text);
+}
+body.dark .card {
+  background: var(--dark-card);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+body.dark summary {
+  background: #444 !important;
+  color: #eee !important;
+}
+body.dark .detail-content {
+  background: #444;
+  color: #ddd;
+}
+body.dark input, body.dark select, body.dark textarea {
+  background: #555;
+  color: #eee;
+  border: 1px solid #666;
+}
+body.dark .btn-primary {
+  background: #6fae70;
+}
+body.dark .btn-primary:hover {
+  background: #598f55;
+}
+
+/* Container */
+.app-container {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Card */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+.card h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--primary);
+  border-bottom: 2px solid var(--accent-bg);
+  padding-bottom: 4px;
+}
+
+/* Progress ring */
+.ring-container {
+  position: relative;
+  width: 120px; height: 120px;
+  margin: 0 auto 12px;
+}
+.progress-ring__circle {
+  transition: stroke-dashoffset 1s linear;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
+.timer-label {
+  position: absolute; top: 34px; width: 100%; text-align: center; font-size: 14px;
+}
+.timer-display {
+  position: absolute; top: 52px; width: 100%; text-align: center; font-size: 18px; font-weight: bold;
+}
+
+/* Controls & Presets */
+.session-controls {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.session-controls label {
+  font-size: 14px; flex: 1; display: flex; justify-content: space-between; align-items: center;
+}
+#timer-presets, #custom-preset {
+  flex: 2; padding: 6px 8px; border: 1px solid #c8e6c9; border-radius: var(--border-radius);
+}
+#save-preset, #start-pause-button, #skip-button {
+  flex: 1; padding: 8px 12px; border: none; border-radius: var(--border-radius); font-weight: 600; cursor: pointer; transition: background 0.2s;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: #388e3c; }
+.btn-secondary { background: var(--accent-bg); color: var(--primary); }
+.btn-secondary:hover { background: #e0f2e9; }
+
+/* Upcoming Sessions */
+.upcoming-list {
+  list-style: none; margin: 0; padding: 0;
+}
+.upcoming-list li {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--accent-bg); padding: 8px; margin-bottom: 8px; border-radius: var(--border-radius); font-size: 14px;
+}
+.upcoming-list .calendar-btn {
+  padding: 4px 8px; font-size: 12px; border: none; border-radius: var(--border-radius); cursor: pointer;
+  background: var(--primary); color: #fff; transition: background 0.2s;
+}
+.upcoming-list .calendar-btn:hover {
+  background: #388e3c;
+}
+
+/* Accordion Panels */
+.accordion {
+  border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow);
+}
+.accordion + .accordion { margin-top: 8px; }
+.accordion summary {
+  list-style: none; padding: 12px 16px; font-size: 15px; font-weight: 600; cursor: pointer;
+  background: var(--accent-bg); color: var(--primary);
+}
+.accordion[open] summary {
+  background: var(--primary); color: #fff;
+}
+.detail-content {
+  padding: 12px 16px; background: var(--accent-bg);
+}
+.detail-content label {
+  display: block; margin-bottom: 12px;
+}
+
+/* Shared inputs */
+.detail-content input, .detail-content select, .detail-content textarea {
+  width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #c8e6c9; border-radius: var(--border-radius); box-sizing: border-box;
+}
+.time-pair { display: flex; gap: 8px; }
+.time-pair > div { flex: 1; }
