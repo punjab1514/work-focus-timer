@@ -1,11 +1,25 @@
 {
-    "name": "Work Focus Timer",
-    "short_name": "FocusTimer",
-    "start_url": "./index.html",
-    "display": "standalone",
-    "background_color": "#f7f9fc",
-    "theme_color": "#4caf50",
-    "icons": [
-      { "src": "icons/icon128.png", "sizes": "128x128", "type": "image/png" }
-    ]
-  }
+  "name": "Work Focus Timer",
+  "short_name": "FocusTimer",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f9fc",
+  "theme_color": "#4caf50",
+  "icons": [
+    {
+      "src": "icons/icon128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ]
+}
