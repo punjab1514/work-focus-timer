@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Settings</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <button class="back-btn" onclick="location.href='index.html'">
+    <span class="material-icons">arrow_back</span>
+  </button>
+  <div class="card">
+    <h2>Settings</h2>
+    <label><input type="checkbox" id="dark-mode-toggle"/> Dark Mode</label>
+    <label>Cycles before long break:
+      <input type="number" id="cycle-count" min="1" value="4"/>
+    </label>
+    <h3>Block Sites</h3>
+    <label><input type="checkbox" id="block-facebook"/> Facebook</label>
+    <label><input type="checkbox" id="block-twitter"/> Twitter</label>
+    <label><input type="checkbox" id="block-instagram"/> Instagram</label>
+    <button id="apply-blocking" class="btn-primary full-width">Apply Blocking</button>
+    <h3>Ambient & Alerts</h3>
+    <label>Focus Sound:
+      <select id="ambient-select">
+        <option value="none">None</option>
+        <option value="rain">Rain</option>
+        <option value="coffee">Coffee Shop</option>
+        <option value="white">White Noise</option>
+      </select>
+    </label>
+    <label>Volume:
+      <input type="range" id="ambient-volume" min="0" max="1" step="0.1" value="0.5"/>
+    </label>
+    <label>Notification:
+      <select id="notification-select">
+        <option value="notification">Chime</option>
+        <option value="beep">Beep</option>
+      </select>
+    </label>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
