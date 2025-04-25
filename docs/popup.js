@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  //
-  // 1) Tab-switcher
-  //
+  // TAB SWITCHER
   const tabs   = document.querySelectorAll('.tab-btn');
   const panels = document.querySelectorAll('.panel');
   tabs.forEach(btn => btn.addEventListener('click', () => {
@@ -11,56 +9,45 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById(btn.dataset.panel).classList.add('active');
   }));
 
-  //
-  // 2) Pomodoro timer
-  //
-  const WORK      = 25 * 60;
-  const SHORT     =  5 * 60;
-  const LONG      = 15 * 60;
+  // POMODORO LOGIC
+  const WORK      = 25*60;
+  const SHORT     =  5*60;
+  const LONG      = 15*60;
   let   mode      = 'work';
   let   timeLeft  = WORK;
   let   duration  = WORK;
   let   timerId   = null;
   let   cycles    = 0;
-  let   cycleCap  = 4;
+  let   cycleCap  = Number(localStorage.getItem('cycleCount')) || 4;
 
-  const circle        = document.querySelector('.progress-ring__circle');
-  const radius        = circle.r.baseVal.value;
-  const circumference = 2 * Math.PI * radius;
-  circle.style.strokeDasharray  = `${circumference} ${circumference}`;
-  circle.style.strokeDashoffset = circumference;
+  const circle = document.querySelector('.progress-ring__circle');
+  const r      = circle.r.baseVal.value;
+  const C      = 2*Math.PI*r;
+  circle.style.strokeDasharray  = `${C} ${C}`;
+  circle.style.strokeDashoffset = C;
 
   const $ = id => document.getElementById(id);
 
-  function setProgress(pct) {
-    circle.style.strokeDashoffset =
-      circumference - (pct / 100) * circumference;
+  function setProg(pct) {
+    circle.style.strokeDashoffset = C - (pct/100)*C;
   }
-
-  function formatTime(s) {
+  function fmt(s) {
     const m  = Math.floor(s/60).toString().padStart(2,'0');
     const ss = (s%60).toString().padStart(2,'0');
     return `${m}:${ss}`;
   }
-
-  function updateUI() {
-    $('timer-display').textContent = formatTime(timeLeft);
+  function updUI() {
+    $('timer-display').textContent = fmt(timeLeft);
     $('timer-label').textContent   =
       mode==='work'        ? 'Work' :
       mode==='short-break' ? 'Short Break' :
                              'Long Break';
-    setProgress( (duration - timeLeft) / duration * 100 );
+    setProg(((duration-timeLeft)/duration)*100);
   }
-
   function tick() {
-    if (timeLeft > 0) {
-      timeLeft--;
-      updateUI();
-    } else {
-      nextSession();
-    }
+    if (timeLeft>0) { timeLeft--; updUI(); }
+    else nextSess();
   }
-
   function startPause() {
     if (timerId) {
       clearInterval(timerId);
@@ -71,182 +58,142 @@ document.addEventListener('DOMContentLoaded', () => {
       $('start-pause-button').textContent = 'Pause';
     }
   }
-
-  function nextSession(auto=true) {
+  function nextSess(auto=true) {
     clearInterval(timerId);
     timerId = null;
-    if (mode === 'work') {
+    if (mode==='work') {
       cycles++;
-      mode = (cycles % cycleCap === 0) ? 'long-break' : 'short-break';
-      timeLeft = (mode === 'long-break') ? LONG : SHORT;
+      mode     = (cycles % cycleCap===0) ? 'long-break' : 'short-break';
+      timeLeft = (mode==='long-break') ? LONG : SHORT;
     } else {
       mode     = 'work';
       timeLeft = WORK;
     }
     duration = timeLeft;
-    updateUI();
+    updUI();
     if (auto) {
-      new Audio(chrome.runtime.getURL('sounds/notification.mp3')).play();
+      new Audio('sounds/notification.mp3').play();
       startPause();
     }
   }
 
-  //
-  // 3) Quick-presets
-  //
-  const presets   = $('timer-presets');
-  const customIn  = $('custom-preset');
-  const savePre   = $('save-preset');
+  // QUICK PRESETS (localStorage)
+  const presets = $('timer-presets');
+  const custom  = $('custom-preset');
+  const savePre = $('save-preset');
 
   function loadPresets() {
-    chrome.storage.local.get('timerPresets', res => {
-      const arr = res.timerPresets || [5,10,17,25];
-      presets.innerHTML = '';
-      arr.forEach(m => presets.add(new Option(`${m} min`, m * 60)));
-      presets.add(new Option('Custom','custom'));
-    });
+    let arr = JSON.parse(localStorage.getItem('timerPresets')||'[]');
+    if (!arr.length) arr = [5,10,17,25];
+    presets.innerHTML = '';
+    arr.forEach(m => presets.add(new Option(`${m} min`, m*60)));
+    presets.add(new Option('Custom','custom'));
+    localStorage.setItem('timerPresets', JSON.stringify(arr));
   }
-
-  presets.addEventListener('change', () => {
-    if (presets.value === 'custom') {
-      customIn.classList.remove('hidden');
-    } else {
-      customIn.classList.add('hidden');
-      const v = Number(presets.value);
+  presets.addEventListener('change', e => {
+    if (e.target.value==='custom') custom.classList.remove('hidden');
+    else {
+      custom.classList.add('hidden');
+      const v = Number(e.target.value);
       if (!isNaN(v)) {
-        timeLeft = duration = v; mode = 'work';
-        updateUI();
+        timeLeft = duration = v; mode='work'; updUI();
       }
     }
   });
-
   savePre.addEventListener('click', () => {
-    const m = parseInt(customIn.value, 10);
+    const m = parseInt(custom.value, 10);
     if (m>0) {
-      chrome.storage.local.get('timerPresets', r => {
-        const arr = r.timerPresets || [5,10,17,25];
-        if (!arr.includes(m)) {
-          arr.push(m);
-          chrome.storage.local.set({ timerPresets: arr });
-          loadPresets();
-        }
-      });
+      let arr = JSON.parse(localStorage.getItem('timerPresets')||'[]');
+      if (!arr.includes(m)) {
+        arr.push(m);
+        localStorage.setItem('timerPresets', JSON.stringify(arr));
+        loadPresets();
+      }
     }
   });
+  loadPresets();
 
-  //
-  // 4) Hook start/skip buttons
-  //
+  // START/SKIP
   $('start-pause-button').addEventListener('click', () => {
-    if (presets.value==='custom') {
-      const m = parseInt(customIn.value,10);
-      if (m>0) {
-        timeLeft = duration = m*60;
-        mode = 'work';
-        updateUI();
-      }
-    } else {
-      const v = Number(presets.value);
-      if (!isNaN(v)) {
-        timeLeft = duration = v;
-        mode = 'work';
-        updateUI();
-      }
+    const v = presets.value==='custom'
+            ? parseInt(custom.value,10)*60
+            : Number(presets.value);
+    if (!isNaN(v) && v>0) {
+      timeLeft = duration = v;
+      mode = 'work';
+      updUI();
     }
     startPause();
   });
+  $('skip-button').addEventListener('click', () => nextSess(false));
 
-  $('skip-button').addEventListener('click', () => nextSession(false));
+  updUI();
 
-  loadPresets();
-  updateUI();
 
-  //
-  // 5) Schedule
-  //
+  // SCHEDULE
   $('add-schedule').addEventListener('click', () => {
     const name  = $('session-name').value || 'Unnamed';
     const start = $('start-time').value;
     const end   = $('end-time').value;
-    if (!start || !end) {
-      return alert('Please set both times');
-    }
+    if (!start||!end) return alert('Please set both times');
     const li = document.createElement('li');
     li.textContent = `${name} — ${start} to ${end}`;
     $('upcoming-sessions-list').appendChild(li);
   });
 
-  //
-  // 6) Notes
-  //
+
+  // NOTES
   $('save-note').addEventListener('click', () => {
     const txt = $('notes-input').value.trim();
     if (!txt) return alert('Enter some notes');
     let arr = JSON.parse(localStorage.getItem('notes')||'[]');
-    arr.push({ ts: Date.now(), note: txt });
+    arr.push({ts:Date.now(),note:txt});
     localStorage.setItem('notes', JSON.stringify(arr));
     alert('Saved');
   });
 
-  //
-  // 7) Settings & blocker & ambient
-  //
+
+  // SETTINGS: dark mode & cycle count
   $('dark-mode-toggle').addEventListener('change', e => {
     document.body.classList.toggle('dark', e.target.checked);
-    chrome.storage.local.set({ darkMode: e.target.checked });
+    localStorage.setItem('darkMode', e.target.checked);
   });
-
   $('cycle-count').addEventListener('change', e => {
-    const v = parseInt(e.target.value,10) || 4;
-    cycleCap = v;
-    chrome.storage.local.set({ cycleCount: v });
+    cycleCap = parseInt(e.target.value,10)||4;
+    localStorage.setItem('cycleCount', cycleCap);
   });
 
-  $('apply-blocking').addEventListener('click', () => {
-    const rules = [];
-    if ($('block-facebook').checked)  rules.push({ id:1, condition:{ urlFilter:'*://*.facebook.com/*' }, action:{ type:'block' } });
-    if ($('block-twitter').checked)   rules.push({ id:2, condition:{ urlFilter:'*://*.twitter.com/*' }, action:{ type:'block' } });
-    if ($('block-instagram').checked) rules.push({ id:3, condition:{ urlFilter:'*://*.instagram.com/*' }, action:{ type:'block' } });
-    chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds:[1,2,3], addRules:rules });
-  });
-
-  const ambientSounds = {
-    rain:   new Audio(chrome.runtime.getURL('sounds/rain.mp3')),
-    coffee: new Audio(chrome.runtime.getURL('sounds/coffee.mp3')),
-    white:  new Audio(chrome.runtime.getURL('sounds/white.mp3')),
+  // AMBIENT SOUNDS
+  const amb = {
+    rain:   new Audio('sounds/rain.mp3'),
+    coffee: new Audio('sounds/coffee.mp3'),
+    white:  new Audio('sounds/white.mp3')
   };
-  Object.values(ambientSounds).forEach(a => { a.loop = true; a.volume = 0.5; });
-
+  Object.values(amb).forEach(a => { a.loop=true; a.volume=0.5; });
   $('ambient-volume').addEventListener('input', e => {
-    const vol = parseFloat(e.target.value);
-    Object.values(ambientSounds).forEach(a => a.volume = vol);
+    Object.values(amb).forEach(a => a.volume = parseFloat(e.target.value));
   });
-
   $('ambient-select').addEventListener('change', e => {
-    Object.values(ambientSounds).forEach(a => { a.pause(); a.currentTime = 0; });
+    Object.values(amb).forEach(a => { a.pause(); a.currentTime = 0; });
     const sel = e.target.value;
-    if (ambientSounds[sel]) ambientSounds[sel].play();
+    if (amb[sel]) amb[sel].play();
+    localStorage.setItem('ambientSel', sel);
   });
 
   // restore settings
-  chrome.storage.local.get(
-    ['darkMode','cycleCount','ambientSel','ambientVol'],
-    res => {
-      if (res.darkMode) {
-        $('dark-mode-toggle').checked = true;
-        document.body.classList.add('dark');
-      }
-      if (res.cycleCount) {
-        $('cycle-count').value = res.cycleCount;
-        cycleCap = res.cycleCount;
-      }
-      if (res.ambientSel) {
-        $('ambient-select').value = res.ambientSel;
-      }
-      if (res.ambientVol != null) {
-        $('ambient-volume').value = res.ambientVol;
-        $('ambient-volume').dispatchEvent(new Event('input'));
-      }
-    }
-  );
+  if (localStorage.getItem('darkMode') === 'true') {
+    $('dark-mode-toggle').checked = true;
+    document.body.classList.add('dark');
+  }
+  if (localStorage.getItem('cycleCount')) {
+    $('cycle-count').value = localStorage.getItem('cycleCount');
+    cycleCap = +localStorage.getItem('cycleCount');
+  }
+  if (localStorage.getItem('ambientSel')) {
+    $('ambient-select').value = localStorage.getItem('ambientSel');
+  }
+  if (localStorage.getItem('ambientVol')) {
+    $('ambient-volume').value = +localStorage.getItem('ambientVol');
+    $('ambient-volume').dispatchEvent(new Event('input'));
+  }
 });
