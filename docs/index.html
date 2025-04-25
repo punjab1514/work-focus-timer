@@ -1,131 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Work Focus Timer</title>
   <link rel="stylesheet" href="popup.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <script defer src="popup.js"></script>
 </head>
 <body>
-  <div class="app-container">
+  <div class="container">
 
-    <!-- SESSION TIMER CARD -->
-    <section id="sessions" class="card">
-      <h2>My Sessions</h2>
-      <div class="ring-container">
-        <svg class="progress-ring" width="120" height="120">
-          <circle class="progress-ring__bg" stroke="#e6e6e6" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
-          <circle class="progress-ring__circle" stroke="#4caf50" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" stroke-linecap="round"/>
-        </svg>
-        <div id="timer-label" class="timer-label">Work</div>
-        <div id="timer-display" class="timer-display">25:00</div>
-      </div>
-      <div class="session-controls">
-        <label for="timer-presets">Quick Timers:</label>
-        <select id="timer-presets"></select>
-        <input type="number" id="custom-preset" placeholder="Custom (mins)" style="display:none;"/>
-        <button id="save-preset" class="btn-secondary">Save Preset</button>
-      </div>
-      <div class="session-controls">
-        <button id="start-pause-button" class="btn-primary">Start</button>
-        <button id="skip-button" class="btn-secondary">Skip</button>
-      </div>
-    </section>
+    <header>
+      <h1>Work Focus Timer</h1>
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="timer">Timer</button>
+        <button class="tab-btn" data-tab="schedule">Schedule</button>
+        <button class="tab-btn" data-tab="insights">Insights</button>
+        <button class="tab-btn" data-tab="notes">Notes</button>
+        <button class="tab-btn" data-tab="settings">Settings</button>
+      </nav>
+    </header>
 
-    <!-- UPCOMING SESSIONS CARD -->
-    <section id="upcoming-sessions-section" class="card">
-      <h2>Upcoming Sessions</h2>
-      <ul id="upcoming-sessions-list" class="upcoming-list">
-        <!-- Scheduled sessions appear here -->
-      </ul>
-    </section>
-
-    <!-- COLLAPSIBLE PANELS -->
-    <details class="accordion">
-      <summary>Scheduling</summary>
-      <div class="detail-content">
-        <label for="session-name">Session Name</label>
-        <input type="text" id="session-name" placeholder="Enter session name"/>
-        <div class="time-pair">
-          <div>
-            <label for="start-time">Start Time</label>
-            <input type="time" id="start-time"/>
+    <main>
+      <!-- TIMER -->
+      <section id="timer" class="tab-content active">
+        <div class="card">
+          <h2>My Session</h2>
+          <div class="ring-container">
+            <svg class="progress-ring" width="120" height="120">
+              <circle class="progress-ring__bg" stroke="#e6e6e6" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+              <circle class="progress-ring__circle" stroke="#4caf50" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" stroke-linecap="round"/>
+            </svg>
+            <div id="timer-label" class="timer-label">Work</div>
+            <div id="timer-display" class="timer-display">25:00</div>
           </div>
-          <div>
-            <label for="end-time">End Time</label>
-            <input type="time" id="end-time"/>
+          <div class="session-controls">
+            <label for="timer-presets">Quick Timers:
+              <select id="timer-presets"></select>
+            </label>
+            <input type="number" id="custom-preset" placeholder="Custom (mins)" style="display:none;"/>
+            <button id="save-preset" class="btn-secondary">Save Preset</button>
+          </div>
+          <div class="session-controls">
+            <button id="start-pause-button" class="btn-primary">Start</button>
+            <button id="skip-button" class="btn-secondary">Skip</button>
           </div>
         </div>
-        <button id="add-schedule" class="btn-primary">Save Schedule</button>
-      </div>
-    </details>
+      </section>
 
-    <details class="accordion">
-      <summary>Productivity Insights</summary>
-      <div class="detail-content">
-        <div id="stats-summary">
-          <p>Today's Sessions: <strong id="stats-today">0</strong></p>
-          <p>This Week: <strong id="stats-week">0</strong></p>
-          <p>This Month: <strong id="stats-month">0</strong></p>
+      <!-- SCHEDULE -->
+      <section id="schedule" class="tab-content">
+        <div class="card">
+          <h2>Scheduling</h2>
+          <label for="session-name">Session Name</label>
+          <input type="text" id="session-name" placeholder="Enter session name"/>
+          <div class="time-pair">
+            <div>
+              <label for="start-time">Start Time</label>
+              <input type="time" id="start-time"/>
+            </div>
+            <div>
+              <label for="end-time">End Time</label>
+              <input type="time" id="end-time"/>
+            </div>
+          </div>
+          <button id="add-schedule" class="btn-primary">Save Schedule</button>
+          <ul id="upcoming-sessions-list" class="upcoming-list"></ul>
         </div>
-        <canvas id="stats-chart" width="320" height="100"></canvas>
-      </div>
-    </details>
+      </section>
 
-    <details class="accordion">
-      <summary>Session Notes</summary>
-      <div class="detail-content">
-        <textarea id="notes-input" placeholder="Enter your session notes…"></textarea>
-        <button id="save-note" class="btn-secondary">Save Note</button>
-      </div>
-    </details>
+      <!-- INSIGHTS -->
+      <section id="insights" class="tab-content">
+        <div class="card">
+          <h2>Productivity Insights</h2>
+          <div id="stats-summary">
+            <p>Today's Sessions: <strong id="stats-today">0</strong></p>
+            <p>This Week: <strong id="stats-week">0</strong></p>
+            <p>This Month: <strong id="stats-month">0</strong></p>
+          </div>
+          <canvas id="stats-chart" width="320" height="100"></canvas>
+        </div>
+      </section>
 
-    <details class="accordion">
-      <summary>Website Blocker</summary>
-      <div class="detail-content">
-        <label><span>Block Facebook</span><input type="checkbox" id="block-facebook"/></label>
-        <label><span>Block Twitter</span><input type="checkbox" id="block-twitter"/></label>
-        <label><span>Block Instagram</span><input type="checkbox" id="block-instagram"/></label>
-        <button id="apply-blocking" class="btn-primary">Apply Blocking</button>
-      </div>
-    </details>
+      <!-- NOTES -->
+      <section id="notes" class="tab-content">
+        <div class="card">
+          <h2>Session Notes</h2>
+          <textarea id="notes-input" placeholder="Enter your notes…"></textarea>
+          <button id="save-note" class="btn-secondary">Save Note</button>
+        </div>
+      </section>
 
-    <details class="accordion">
-      <summary>Settings</summary>
-      <div class="detail-content">
-        <label for="dark-mode-toggle">Dark Mode:
-          <input type="checkbox" id="dark-mode-toggle"/>
-        </label>
-        <label for="cycle-count">Cycles before long break:</label>
-        <input type="number" id="cycle-count" min="1" value="4"/>
-      </div>
-    </details>
-
-    <details class="accordion">
-      <summary>Ambient Sounds & Alerts</summary>
-      <div class="detail-content">
-        <label for="ambient-select"><span>Focus Sound</span>
-          <select id="ambient-select">
-            <option value="none">None</option>
-            <option value="rain">Rain</option>
-            <option value="coffee">Coffee Shop</option>
-            <option value="white">White Noise</option>
-          </select>
-        </label>
-        <label for="ambient-volume"><span>Volume</span>
-          <input type="range" id="ambient-volume" min="0" max="1" step="0.1" value="0.5"/>
-        </label>
-        <label for="notification-select"><span>Notification Sound</span>
-          <select id="notification-select">
-            <option value="notification">Chime</option>
-            <option value="beep">Beep</option>
-          </select>
-        </label>
-      </div>
-    </details>
-
+      <!-- SETTINGS -->
+      <section id="settings" class="tab-content">
+        <div class="card">
+          <h2>Settings & Extras</h2>
+          <label>Dark Mode:
+            <input type="checkbox" id="dark-mode-toggle"/>
+          </label>
+          <label>Cycles before long break:
+            <input type="number" id="cycle-count" min="1" value="4"/>
+          </label>
+          <hr/>
+          <h3>Website Blocker</h3>
+          <label><span>Block Facebook</span><input type="checkbox" id="block-facebook"/></label>
+          <label><span>Block Twitter</span><input type="checkbox" id="block-twitter"/></label>
+          <label><span>Block Instagram</span><input type="checkbox" id="block-instagram"/></label>
+          <button id="apply-blocking" class="btn-primary">Apply Blocking</button>
+          <hr/>
+          <h3>Ambient Sounds & Alerts</h3>
+          <label><span>Focus Sound</span>
+            <select id="ambient-select">
+              <option value="none">None</option>
+              <option value="rain">Rain</option>
+              <option value="coffee">Coffee Shop</option>
+              <option value="white">White Noise</option>
+            </select>
+          </label>
+          <label><span>Volume</span>
+            <input type="range" id="ambient-volume" min="0" max="1" step="0.1" value="0.5"/>
+          </label>
+          <label><span>Notification Sound</span>
+            <select id="notification-select">
+              <option value="notification">Chime</option>
+              <option value="beep">Beep</option>
+            </select>
+          </label>
+        </div>
+      </section>
+    </main>
   </div>
-  <script src="popup.js"></script>
 </body>
 </html>
