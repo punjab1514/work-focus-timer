@@ -1,42 +1,19 @@
 {
   "manifest_version": 3,
   "name": "Work Focus Timer",
-  "version": "1.1.0",
-  "description": "A Chrome extension to help you focus using the Pomodoro technique.",
-  "permissions": [
-    "storage",
-    "declarativeNetRequest"
-  ],
+  "version": "1.2.0",
+  "description": "A Pomodoro app with quick timers, scheduling, notes, insights, blocking & ambient sounds.",
+  "permissions": ["storage","declarativeNetRequest"],
   "host_permissions": [
     "*://*.facebook.com/*",
     "*://*.twitter.com/*",
     "*://*.instagram.com/*"
   ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": "icons/icon128.png"
-  },
-  "background": {
-    "service_worker": "background.js"
-  },
+  "action": { "default_popup": "popup.html", "default_icon": "icons/icon128.png" },
+  "background": { "service_worker": "background.js" },
   "declarative_net_request": {
-    "rule_resources": [
-      {
-        "id": "block_sites",
-        "enabled": true,
-        "path": "rules.json"
-      }
-    ]
+    "rule_resources": [{ "id": "block_sites", "enabled": true, "path": "rules.json" }]
   },
-  "web_accessible_resources": [
-    {
-      "resources": ["sounds/*.mp3"],
-      "matches": ["<all_urls>"]
-    }
-  ],
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  }
+  "web_accessible_resources": [{ "resources": ["sounds/*.mp3"], "matches": ["<all_urls>"] }],
+  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
 }
