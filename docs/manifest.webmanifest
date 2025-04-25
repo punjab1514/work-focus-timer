@@ -1,19 +1,26 @@
 {
-  "manifest_version": 3,
   "name": "Work Focus Timer",
-  "version": "1.2.0",
-  "description": "A Pomodoro app with quick timers, scheduling, notes, insights, blocking & ambient sounds.",
-  "permissions": ["storage","declarativeNetRequest"],
-  "host_permissions": [
-    "*://*.facebook.com/*",
-    "*://*.twitter.com/*",
-    "*://*.instagram.com/*"
-  ],
-  "action": { "default_popup": "index.html", "default_icon": "icons/icon128.png" },
-  "background": { "service_worker": "background.js" },
-  "declarative_net_request": {
-    "rule_resources": [{ "id": "block_sites", "enabled": true, "path": "rules.json" }]
-  },
-  "web_accessible_resources": [{ "resources": ["sounds/*.mp3"], "matches": ["<all_urls>"] }],
-  "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+  "short_name": "FocusTimer",
+  "description": "A Pomodoro app with quick timers, scheduling, notes, insights, site-blocking & ambient sounds.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f9fc",
+  "theme_color": "#4caf50",
+  "icons": [
+    {
+      "src": "icons/icon128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ]
 }
