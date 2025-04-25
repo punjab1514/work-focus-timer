@@ -2,118 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Work Focus Timer</title>
-
-  <!-- Poppins + Material Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Work Focus</title>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-
-  <link rel="stylesheet" href="popup.css"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <!-- Icon-driven tab bar -->
-  <nav class="icon-bar">
-    <button class="icon-btn active" data-tab="timer"><span class="material-icons">timer</span><span>Timer</span></button>
-    <button class="icon-btn" data-tab="schedule"><span class="material-icons">calendar_today</span><span>Schedule</span></button>
-    <button class="icon-btn" data-tab="insights"><span class="material-icons">insights</span><span>Stats</span></button>
-    <button class="icon-btn" data-tab="notes"><span class="material-icons">note</span><span>Notes</span></button>
-    <button class="icon-btn" data-tab="settings"><span class="material-icons">settings</span><span>Settings</span></button>
-  </nav>
-
-  <main>
-    <!-- Timer -->
-    <section id="timer" class="panel active">
-      <div class="card">
-        <div class="ring-container">
-          <svg class="progress-ring" width="140" height="140">
-            <circle class="progress-ring__bg" stroke="#eee" stroke-width="10" fill="transparent" r="60" cx="70" cy="70"/>
-            <circle class="progress-ring__circle" stroke="#4caf50" stroke-width="10" fill="transparent" r="60" cx="70" cy="70" stroke-linecap="round"/>
-          </svg>
-          <div id="timer-label" class="timer-label">Work</div>
-          <div id="timer-display" class="timer-display">25:00</div>
-        </div>
-        <div class="controls-row">
-          <select id="timer-presets"></select>
-          <input type="number" id="custom-preset" placeholder="Custom min" class="hidden"/>
-          <button id="save-preset" class="btn btn-outline">Save Preset</button>
-        </div>
-        <div class="controls-row">
-          <button id="start-pause-button" class="btn btn-primary">Start</button>
-          <button id="skip-button"     class="btn btn-secondary">Skip</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Schedule -->
-    <section id="schedule" class="panel">
-      <div class="card">
-        <h2>Schedule</h2>
-        <input type="text" id="session-name" placeholder="Session name"/>
-        <div class="time-pair">
-          <input type="time" id="start-time"/>
-          <input type="time" id="end-time"/>
-        </div>
-        <button id="add-schedule" class="btn btn-primary full-width">Save</button>
-        <ul id="upcoming-sessions-list" class="upcoming-list"></ul>
-      </div>
-    </section>
-
-    <!-- Insights -->
-    <section id="insights" class="panel">
-      <div class="card">
-        <h2>Insights</h2>
-        <div class="stats-row">
-          <div><span id="stats-today">0</span><small>Today</small></div>
-          <div><span id="stats-week">0</span><small>This Week</small></div>
-          <div><span id="stats-month">0</span><small>This Month</small></div>
-        </div>
-        <canvas id="stats-chart"></canvas>
-      </div>
-    </section>
-
-    <!-- Notes -->
-    <section id="notes" class="panel">
-      <div class="card">
-        <h2>Notes</h2>
-        <textarea id="notes-input" placeholder="Type your notes…"></textarea>
-        <button id="save-note" class="btn btn-outline full-width">Save Note</button>
-      </div>
-    </section>
-
-    <!-- Settings -->
-    <section id="settings" class="panel">
-      <div class="card">
-        <h2>Settings</h2>
-        <label><input type="checkbox" id="dark-mode-toggle"/> Dark Mode</label>
-        <label>Cycles before long break: <input type="number" id="cycle-count" min="1" value="4"/></label>
-        <h3>Block Sites</h3>
-        <label><input type="checkbox" id="block-facebook"/> Facebook</label>
-        <label><input type="checkbox" id="block-twitter"/> Twitter</label>
-        <label><input type="checkbox" id="block-instagram"/> Instagram</label>
-        <button id="apply-blocking" class="btn btn-primary full-width">Apply Blocking</button>
-        <h3>Ambient & Alerts</h3>
-        <label>Focus Sound:
-          <select id="ambient-select">
-            <option value="none">None</option>
-            <option value="rain">Rain</option>
-            <option value="coffee">Coffee Shop</option>
-            <option value="white">White Noise</option>
-          </select>
-        </label>
-        <label>Volume:
-          <input type="range" id="ambient-volume" min="0" max="1" step="0.1" value="0.5"/>
-        </label>
-        <label>Notification:
-          <select id="notification-select">
-            <option value="notification">Chime</option>
-            <option value="beep">Beep</option>
-          </select>
-        </label>
-      </div>
-    </section>
-  </main>
-
-  <script src="popup.js"></script>
+  <div class="menu-grid">
+    <a href="timer.html"   class="menu-card"><span class="material-icons">timer</span></a>
+    <a href="schedule.html"class="menu-card"><span class="material-icons">calendar_today</span></a>
+    <a href="stats.html"   class="menu-card"><span class="material-icons">insights</span></a>
+    <a href="notes.html"   class="menu-card"><span class="material-icons">note</span></a>
+    <a href="settings.html"class="menu-card"><span class="material-icons">settings</span></a>
+  </div>
 </body>
 </html>
