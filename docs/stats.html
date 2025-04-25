@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Stats</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <button class="back-btn" onclick="location.href='index.html'">
+    <span class="material-icons">arrow_back</span>
+  </button>
+  <div class="card">
+    <h2>Insights</h2>
+    <div class="stats-row">
+      <div><span id="stats-today">0</span><small>Today</small></div>
+      <div><span id="stats-week">0</span><small>This Week</small></div>
+      <div><span id="stats-month">0</span><small>This Month</small></div>
+    </div>
+    <canvas id="stats-chart"></canvas>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
