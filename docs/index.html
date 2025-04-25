@@ -1,48 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Work Focus Timer</title>
-  <link
-    href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="style.css"/>
+  <link href="styles.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <!-- top navigation -->
-  <nav class="topnav">
-    <a href="index.html"     class="active"><span class="material-icons">timer</span></a>
-    <a href="schedule.html"            ><span class="material-icons">calendar_today</span></a>
-    <a href="stats.html"               ><span class="material-icons">insights</span></a>
-    <a href="notes.html"               ><span class="material-icons">note_alt</span></a>
-    <a href="settings.html"            ><span class="material-icons">settings</span></a>
-  </nav>
+  <div class="app">
+    <!-- top nav -->
+    <nav class="top-nav">
+      <button class="tab-btn active" data-panel="timer"><img src="icons/timer.svg" alt="Timer" /></button>
+      <button class="tab-btn" data-panel="schedule"><img src="icons/calendar.svg" alt="Schedule" /></button>
+      <button class="tab-btn" data-panel="stats"><img src="icons/stats.svg" alt="Stats" /></button>
+      <button class="tab-btn" data-panel="notes"><img src="icons/notes.svg" alt="Notes" /></button>
+      <button class="tab-btn" data-panel="settings"><img src="icons/settings.svg" alt="Settings" /></button>
+    </nav>
 
-  <main>
-    <section class="card">
+    <!-- panels -->
+    <section id="timer" class="panel active card">
+      <!-- (your existing ring + presets + start/skip controls go here) -->
       <h2>My Session</h2>
       <div class="ring-container">
-        <svg width="140" height="140">
-          <circle class="bg" cx="70" cy="70" r="60" stroke="#eee" stroke-width="10" fill="none"/>
-          <circle class="fg" cx="70" cy="70" r="60" stroke="#4caf50" stroke-width="10" fill="none"/>
+        <svg class="progress-ring" width="120" height="120">
+          <circle class="progress-ring__bg" stroke="#e6e6e6" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+          <circle class="progress-ring__circle" stroke="#4caf50" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" stroke-linecap="round"/>
         </svg>
         <div id="timer-label" class="timer-label">Work</div>
         <div id="timer-display" class="timer-display">25:00</div>
       </div>
-
-      <div class="controls-row">
+      <div class="controls">
         <select id="timer-presets"></select>
-        <input type="number" id="custom-preset" placeholder="Custom min" class="hidden"/>
-        <button id="save-preset" class="btn-outline">Save Preset</button>
+        <input id="custom-preset" type="number" placeholder="Custom (min)" class="hidden"/>
+        <button id="save-preset" class="btn-secondary">Save Preset</button>
       </div>
-      <div class="controls-row">
+      <div class="controls">
         <button id="start-pause-button" class="btn-primary">Start</button>
         <button id="skip-button" class="btn-secondary">Skip</button>
       </div>
     </section>
-  </main>
+
+    <section id="schedule" class="panel card">
+      <h2>Schedule</h2>
+      <input id="session-name" type="text" placeholder="Session name" />
+      <div class="time-pair">
+        <input id="start-time" type="time" />
+        <input id="end-time"   type="time" />
+      </div>
+      <button id="add-schedule" class="btn-primary">Save</button>
+      <ul id="upcoming-sessions-list" class="upcoming-list"></ul>
+    </section>
+
+    <section id="stats" class="panel card">
+      <h2>Productivity Insights</h2>
+      <div class="stats-grid">
+        <div><strong id="stats-today">0</strong><span>Today</span></div>
+        <div><strong id="stats-week">0</strong><span>This Week</span></div>
+        <div><strong id="stats-month">0</strong><span>This Month</span></div>
+      </div>
+    </section>
+
+    <section id="notes" class="panel card">
+      <h2>Session Notes</h2>
+      <textarea id="notes-input" placeholder="Type your notes…"></textarea>
+      <button id="save-note" class="btn-secondary">Save Note</button>
+    </section>
+
+    <section id="settings" class="panel card">
+      <h2>Settings</h2>
+      <label><input id="dark-mode-toggle" type="checkbox" /> Dark Mode</label>
+      <label>Cycles before long break: <input id="cycle-count" type="number" min="1" value="4" /></label>
+
+      <fieldset>
+        <legend>Block Sites</legend>
+        <label><input id="block-facebook" type="checkbox" /> Facebook</label>
+        <label><input id="block-twitter"  type="checkbox" /> Twitter</label>
+        <label><input id="block-instagram" type="checkbox" /> Instagram</label>
+        <button id="apply-blocking" class="btn-primary">Apply Blocking</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Ambient & Alerts</legend>
+        <label>Focus Sound:
+          <select id="ambient-select">
+            <option value="none">None</option>
+            <option value="rain">Rain</option>
+            <option value="coffee">Coffee Shop</option>
+            <option value="white">White Noise</option>
+          </select>
+        </label>
+        <label>Volume:
+          <input id="ambient-volume" type="range" min="0" max="1" step="0.1" value="0.5" />
+        </label>
+        <label>Notification:
+          <select id="notification-select">
+            <option value="notification">Chime</option>
+            <option value="beep">Beep</option>
+          </select>
+        </label>
+      </fieldset>
+    </section>
+  </div>
 
   <script src="popup.js"></script>
 </body>
