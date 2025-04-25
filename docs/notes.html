@@ -7,14 +7,20 @@
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <button class="back-btn" onclick="location.href='index.html'">
-    <span class="material-icons">arrow_back</span>
-  </button>
-  <div class="card">
-    <h2>Notes</h2>
-    <textarea id="notes-input" placeholder="Your notes…"></textarea>
-    <button id="save-note" class="btn-outline full-width">Save Note</button>
-  </div>
+  <nav class="topnav">
+    <a href="index.html"     ><span class="material-icons">timer</span></a>
+    <a href="schedule.html"  ><span class="material-icons">calendar_today</span></a>
+    <a href="stats.html"     ><span class="material-icons">insights</span></a>
+    <a href="notes.html"   class="active"><span class="material-icons">note_alt</span></a>
+    <a href="settings.html"            ><span class="material-icons">settings</span></a>
+  </nav>
+  <main>
+    <section class="card">
+      <h2>Session Notes</h2>
+      <textarea id="notes-input" placeholder="Type your notes…"></textarea>
+      <button id="save-note" class="btn-outline full-width">Save Note</button>
+    </section>
+  </main>
   <script src="popup.js"></script>
 </body>
 </html>
