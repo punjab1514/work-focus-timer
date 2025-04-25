@@ -9,125 +9,115 @@
 </head>
 <body>
   <div class="app">
-    <!-- top nav -->
-    <nav class="top-nav">
-      <button class="tab-btn active" data-panel="timer">
-        <img src="icons/timer.svg" alt="Timer" />
-      </button>
-      <button class="tab-btn" data-panel="schedule">
-        <img src="icons/calendar.svg" alt="Schedule" />
-      </button>
-      <button class="tab-btn" data-panel="stats">
-        <img src="icons/stats.svg" alt="Stats" />
-      </button>
-      <button class="tab-btn" data-panel="notes">
-        <img src="icons/notes.svg" alt="Notes" />
-      </button>
-      <button class="tab-btn" data-panel="settings">
-        <img src="icons/settings.svg" alt="Settings" />
-      </button>
-    </nav>
 
-    <!-- TIMER PANEL -->
-    <section id="timer" class="panel active card">
-      <h2>My Session</h2>
-      <div class="ring-container">
-        <svg class="progress-ring" width="120" height="120">
-          <circle class="progress-ring__bg" stroke="#e6e6e6" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
-          <circle class="progress-ring__circle" stroke="#4caf50" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" stroke-linecap="round"/>
-        </svg>
-        <div id="timer-label" class="timer-label">Work</div>
-        <div id="timer-display" class="timer-display">25:00</div>
-      </div>
-      <div class="controls">
-        <select id="timer-presets"></select>
-        <input id="custom-preset" type="number" placeholder="Custom (min)" class="hidden"/>
-        <button id="save-preset" class="btn-secondary">Save Preset</button>
-      </div>
-      <div class="controls">
-        <button id="start-pause-button" class="btn-primary">Start</button>
-        <button id="skip-button" class="btn-secondary">Skip</button>
-      </div>
-    </section>
+    <!-- one single card wrapping nav + panels -->
+    <div class="card container">
 
-    <!-- SCHEDULE PANEL -->
-    <section id="schedule" class="panel card">
-      <h2>Schedule</h2>
-      <input id="session-name" type="text" placeholder="Session name" />
-      <div class="time-pair">
-        <input id="start-time" type="time" />
-        <input id="end-time"   type="time" />
-      </div>
-      <button id="add-schedule" class="btn-primary">Save</button>
-      <ul id="upcoming-sessions" class="upcoming-list"></ul>
-    </section>
+      <!-- top nav -->
+      <nav class="top-nav">
+        <button class="tab-btn active" data-panel="timer"><img src="icons/timer.svg"   alt="Timer"   /></button>
+        <button class="tab-btn"       data-panel="schedule"><img src="icons/calendar.svg" alt="Schedule" /></button>
+        <button class="tab-btn"       data-panel="stats"><img   src="icons/stats.svg"    alt="Stats"    /></button>
+        <button class="tab-btn"       data-panel="notes"><img   src="icons/notes.svg"    alt="Notes"    /></button>
+        <button class="tab-btn"       data-panel="settings"><img src="icons/settings.svg" alt="Settings" /></button>
+      </nav>
 
-    <!-- STATS PANEL -->
-    <section id="stats" class="panel card">
-      <h2>Productivity Insights</h2>
-      <div class="stats-grid">
-        <div><strong id="stats-today">0</strong><span>Today</span></div>
-        <div><strong id="stats-week">0</strong><span>This Week</span></div>
-        <div><strong id="stats-month">0</strong><span>This Month</span></div>
-      </div>
-    </section>
+      <!-- panels -->
+      <div class="panel-wrapper">
 
-    <!-- NOTES PANEL -->
-    <section id="notes" class="panel card">
-      <h2>Session Notes</h2>
-      <textarea id="notes-input" placeholder="Type your notes…"></textarea>
-      <button id="save-note" class="btn-secondary">Save Note</button>
-    </section>
+        <section id="timer" class="panel active">
+          <h2>My Session</h2>
+          <div class="ring-container">
+            <svg class="progress-ring" width="120" height="120">
+              <circle class="progress-ring__bg" stroke="#e6e6e6" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+              <circle class="progress-ring__circle" stroke="#4caf50" stroke-width="8" fill="transparent" r="52" cx="60" cy="60" stroke-linecap="round"/>
+            </svg>
+            <div id="timer-label"   class="timer-label">Work</div>
+            <div id="timer-display" class="timer-display">25:00</div>
+          </div>
+          <div class="controls">
+            <select id="timer-presets"></select>
+            <input id="custom-preset" type="number" placeholder="Custom (min)" class="hidden"/>
+            <button id="save-preset" class="btn-secondary">Save Preset</button>
+          </div>
+          <div class="controls">
+            <button id="start-pause-button" class="btn-primary">Start</button>
+            <button id="skip-button"        class="btn-secondary">Skip</button>
+          </div>
+        </section>
 
-    <!-- SETTINGS PANEL -->
-    <section id="settings" class="panel card">
-      <h2>Settings</h2>
+        <section id="schedule" class="panel">
+          <h2>Schedule</h2>
+          <input id="session-name" type="text" placeholder="Session name" />
+          <div class="time-pair">
+            <input id="start-time" type="time" />
+            <input id="end-time"   type="time" />
+          </div>
+          <button id="add-schedule" class="btn-primary">Save</button>
+          <ul id="upcoming-sessions" class="upcoming-list"></ul>
+        </section>
 
-      <div class="setting-item">
-        <label>
-          <input id="dark-mode-toggle" type="checkbox"/>
-          Enable Dark Mode
-        </label>
-      </div>
+        <section id="stats" class="panel">
+          <h2>Productivity Insights</h2>
+          <div class="stats-grid">
+            <div><strong id="stats-today">0</strong><span>Today</span></div>
+            <div><strong id="stats-week">0</strong><span>This Week</span></div>
+            <div><strong id="stats-month">0</strong><span>This Month</span></div>
+          </div>
+        </section>
 
-      <div class="setting-item">
-        <label for="cycle-count">
-          Cycles before long break:
-          <input id="cycle-count" type="number" min="1" value="4" style="width:4em; margin-left:.5em"/>
-        </label>
-      </div>
+        <section id="notes" class="panel">
+          <h2>Session Notes</h2>
+          <textarea id="notes-input" placeholder="Type your notes…"></textarea>
+          <button id="save-note" class="btn-secondary">Save Note</button>
+        </section>
 
-      <fieldset class="setting-fieldset">
-        <legend>Ambient &amp; Alerts</legend>
-        <div class="setting-item">
-          <label for="ambient-select">
-            Focus Sound:
-            <select id="ambient-select">
-              <option value="none">None</option>
-              <option value="rain">Rain</option>
-              <option value="coffee">Coffee Shop</option>
-              <option value="white">White Noise</option>
-            </select>
-          </label>
-        </div>
-        <div class="setting-item">
-          <label for="ambient-volume">
-            Volume:
-            <input id="ambient-volume" type="range" min="0" max="1" step="0.1" value="0.5"/>
-          </label>
-        </div>
-        <div class="setting-item">
-          <label for="notification-select">
-            Notification Sound:
-            <select id="notification-select">
-              <option value="notification">Chime</option>
-              <option value="beep">Beep</option>
-            </select>
-          </label>
-        </div>
-      </fieldset>
-    </section>
-  </div>
+        <section id="settings" class="panel">
+          <h2>Settings</h2>
+
+          <div class="setting-item">
+            <label><input id="dark-mode-toggle" type="checkbox"/> Enable Dark Mode</label>
+          </div>
+
+          <div class="setting-item">
+            <label>
+              Cycles before long break:
+              <input id="cycle-count" type="number" min="1" value="4" style="width:4em; margin-left:.5em"/>
+            </label>
+          </div>
+
+          <fieldset class="setting-fieldset">
+            <legend>Ambient &amp; Alerts</legend>
+            <div class="setting-item">
+              <label>Focus Sound:
+                <select id="ambient-select">
+                  <option value="none">None</option>
+                  <option value="rain">Rain</option>
+                  <option value="coffee">Coffee Shop</option>
+                  <option value="white">White Noise</option>
+                </select>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Volume:
+                <input id="ambient-volume" type="range" min="0" max="1" step="0.1" value="0.5"/>
+              </label>
+            </div>
+            <div class="setting-item">
+              <label>Notification:
+                <select id="notification-select">
+                  <option value="notification">Chime</option>
+                  <option value="beep">Beep</option>
+                </select>
+              </label>
+            </div>
+          </fieldset>
+        </section>
+
+      </div><!-- /.panel-wrapper -->
+    </div><!-- /.card.container -->
+
+  </div><!-- /.app -->
 
   <script src="main.js"></script>
 </body>
