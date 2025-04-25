@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Schedule</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <button class="back-btn" onclick="location.href='index.html'">
+    <span class="material-icons">arrow_back</span>
+  </button>
+  <div class="card">
+    <h2>Schedule</h2>
+    <input type="text" id="session-name" placeholder="Session name"/>
+    <div class="time-pair">
+      <input type="time" id="start-time"/>
+      <input type="time" id="end-time"/>
+    </div>
+    <button id="add-schedule" class="btn-primary full-width">Save</button>
+    <ul id="upcoming-sessions-list" class="upcoming-list"></ul>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
