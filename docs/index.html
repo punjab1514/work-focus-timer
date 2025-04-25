@@ -11,24 +11,14 @@
   <div class="app-container">
     <!-- top nav -->
     <nav class="top-nav">
-      <button class="tab-btn active" data-panel="timer">
-        <img src="icons/timer.svg"   alt="Timer"/>
-      </button>
-      <button class="tab-btn" data-panel="schedule">
-        <img src="icons/calendar.svg" alt="Schedule"/>
-      </button>
-      <button class="tab-btn" data-panel="stats">
-        <img src="icons/stats.svg"    alt="Stats"/>
-      </button>
-      <button class="tab-btn" data-panel="notes">
-        <img src="icons/notes.svg"    alt="Notes"/>
-      </button>
-      <button class="tab-btn" data-panel="settings">
-        <img src="icons/settings.svg" alt="Settings"/>
-      </button>
+      <button class="tab-btn active" data-panel="timer"><img src="icons/timer.svg"   alt="Timer"/></button>
+      <button class="tab-btn"       data-panel="schedule"><img src="icons/calendar.svg" alt="Schedule"/></button>
+      <button class="tab-btn"       data-panel="stats"><img src="icons/stats.svg"    alt="Stats"/></button>
+      <button class="tab-btn"       data-panel="notes"><img src="icons/notes.svg"    alt="Notes"/></button>
+      <button class="tab-btn"       data-panel="settings"><img src="icons/settings.svg" alt="Settings"/></button>
     </nav>
 
-    <!-- panels -->
+    <!-- panels (all 360px wide!) -->
     <section id="timer" class="panel card active">
       <h2>My Session</h2>
       <div class="ring-container">
@@ -82,11 +72,8 @@
       <label>Cycles before long break: <input id="cycle-count" type="number" min="1" value="4"/></label>
 
       <fieldset>
-        <legend>Block Sites</legend>
-        <label><input id="block-facebook"  type="checkbox"/> Facebook</label>
-        <label><input id="block-twitter"   type="checkbox"/> Twitter</label>
-        <label><input id="block-instagram" type="checkbox"/> Instagram</label>
-        <button id="apply-blocking" class="btn-primary">Apply Blocking</button>
+        <legend>Block Sites (n/a in web)</legend>
+        <p class="note">(Only works as extension)</p>
       </fieldset>
 
       <fieldset>
