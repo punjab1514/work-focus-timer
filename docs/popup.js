@@ -1,199 +1,187 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // TAB SWITCHER
-  const tabs   = document.querySelectorAll('.tab-btn');
-  const panels = document.querySelectorAll('.panel');
-  tabs.forEach(btn => btn.addEventListener('click', () => {
-    tabs.forEach(b => b.classList.remove('active'));
-    panels.forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.panel).classList.add('active');
-  }));
+document.addEventListener('DOMContentLoaded',()=>{
+  // 1) tab switching
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.panel).classList.add('active');
+    });
+  });
 
-  // POMODORO LOGIC
-  const WORK      = 25*60;
-  const SHORT     =  5*60;
-  const LONG      = 15*60;
-  let   mode      = 'work';
-  let   timeLeft  = WORK;
-  let   duration  = WORK;
-  let   timerId   = null;
-  let   cycles    = 0;
-  let   cycleCap  = Number(localStorage.getItem('cycleCount')) || 4;
-
+  // 2) pomodoro
+  const WORK=25*60, SHORT=5*60, LONG=15*60;
+  let mode='work', timeLeft=WORK, duration=WORK, timerId=null, cycles=0, cyclesBeforeLong=4;
   const circle = document.querySelector('.progress-ring__circle');
-  const r      = circle.r.baseVal.value;
-  const C      = 2*Math.PI*r;
-  circle.style.strokeDasharray  = `${C} ${C}`;
-  circle.style.strokeDashoffset = C;
+  const R = circle.r.baseVal.value, C = 2*Math.PI*R;
+  circle.style.strokeDasharray = `${C} ${C}`;
+  circle.style.strokeDashoffset= C;
+  const $=id=>document.getElementById(id);
 
-  const $ = id => document.getElementById(id);
-
-  function setProg(pct) {
-    circle.style.strokeDashoffset = C - (pct/100)*C;
+  function setProgress(p){ circle.style.strokeDashoffset = C - p/100*C; }
+  function fmt(s){
+    const m = Math.floor(s/60).toString().padStart(2,'0'),
+          sec = (s%60).toString().padStart(2,'0');
+    return `${m}:${sec}`;
   }
-  function fmt(s) {
-    const m  = Math.floor(s/60).toString().padStart(2,'0');
-    const ss = (s%60).toString().padStart(2,'0');
-    return `${m}:${ss}`;
+  function updateUI(){
+    $('timer-display').textContent=fmt(timeLeft);
+    $('timer-label').textContent = mode==='work'? 'Work'
+      : mode==='short-break'? 'Short Break' : 'Long Break';
+    setProgress((duration-timeLeft)/duration*100);
   }
-  function updUI() {
-    $('timer-display').textContent = fmt(timeLeft);
-    $('timer-label').textContent   =
-      mode==='work'        ? 'Work' :
-      mode==='short-break' ? 'Short Break' :
-                             'Long Break';
-    setProg(((duration-timeLeft)/duration)*100);
+  function tick(){
+    if(timeLeft>0){ timeLeft--; updateUI(); }
+    else nextSession();
   }
-  function tick() {
-    if (timeLeft>0) { timeLeft--; updUI(); }
-    else nextSess();
-  }
-  function startPause() {
-    if (timerId) {
+  function startPause(){
+    if(timerId){
       clearInterval(timerId);
-      timerId = null;
-      $('start-pause-button').textContent = 'Start';
+      timerId=null;
+      $('start-pause-button').textContent='Start';
     } else {
-      timerId = setInterval(tick, 1000);
-      $('start-pause-button').textContent = 'Pause';
+      timerId=setInterval(tick,1000);
+      $('start-pause-button').textContent='Pause';
     }
   }
-  function nextSess(auto=true) {
+  function nextSession(auto=true){
     clearInterval(timerId);
-    timerId = null;
-    if (mode==='work') {
+    timerId=null;
+    if(mode==='work'){
       cycles++;
-      mode     = (cycles % cycleCap===0) ? 'long-break' : 'short-break';
-      timeLeft = (mode==='long-break') ? LONG : SHORT;
+      mode = cycles%cyclesBeforeLong===0? 'long-break':'short-break';
+      timeLeft = mode==='long-break'? LONG:SHORT;
     } else {
-      mode     = 'work';
-      timeLeft = WORK;
+      mode='work';
+      timeLeft=WORK;
     }
     duration = timeLeft;
-    updUI();
-    if (auto) {
+    updateUI();
+    if(auto){
       new Audio('sounds/notification.mp3').play();
       startPause();
     }
   }
 
-  // QUICK PRESETS (localStorage)
-  const presets = $('timer-presets');
-  const custom  = $('custom-preset');
-  const savePre = $('save-preset');
-
-  function loadPresets() {
-    let arr = JSON.parse(localStorage.getItem('timerPresets')||'[]');
-    if (!arr.length) arr = [5,10,17,25];
-    presets.innerHTML = '';
-    arr.forEach(m => presets.add(new Option(`${m} min`, m*60)));
-    presets.add(new Option('Custom','custom'));
-    localStorage.setItem('timerPresets', JSON.stringify(arr));
+  // presets UI
+  function loadPresets(){
+    chrome.storage.local.get('timerPresets',res=>{
+      const arr = res.timerPresets||[5,10,17,25];
+      $('timer-presets').innerHTML='';
+      arr.forEach(m=> $('timer-presets').add(new Option(`${m} min`,m*60)));
+      $('timer-presets').add(new Option('Custom','custom'));
+    });
   }
-  presets.addEventListener('change', e => {
-    if (e.target.value==='custom') custom.classList.remove('hidden');
-    else {
-      custom.classList.add('hidden');
+  $('timer-presets').addEventListener('change',e=>{
+    if(e.target.value==='custom'){
+      $('custom-preset').classList.remove('hidden');
+    } else {
+      $('custom-preset').classList.add('hidden');
       const v = Number(e.target.value);
-      if (!isNaN(v)) {
-        timeLeft = duration = v; mode='work'; updUI();
+      if(!isNaN(v)){
+        timeLeft=duration=v;
+        mode='work';
+        updateUI();
       }
     }
   });
-  savePre.addEventListener('click', () => {
-    const m = parseInt(custom.value, 10);
-    if (m>0) {
-      let arr = JSON.parse(localStorage.getItem('timerPresets')||'[]');
-      if (!arr.includes(m)) {
-        arr.push(m);
-        localStorage.setItem('timerPresets', JSON.stringify(arr));
-        loadPresets();
-      }
+  $('save-preset').addEventListener('click',()=>{
+    const m = parseInt($('custom-preset').value,10);
+    if(m>0){
+      chrome.storage.local.get('timerPresets',res=>{
+        const arr = res.timerPresets||[5,10,17,25];
+        if(!arr.includes(m)){
+          arr.push(m);
+          chrome.storage.local.set({timerPresets:arr});
+          loadPresets();
+        }
+      });
     }
   });
   loadPresets();
 
-  // START/SKIP
-  $('start-pause-button').addEventListener('click', () => {
-    const v = presets.value==='custom'
-            ? parseInt(custom.value,10)*60
-            : Number(presets.value);
-    if (!isNaN(v) && v>0) {
-      timeLeft = duration = v;
-      mode = 'work';
-      updUI();
+  // start/skip
+  $('start-pause-button').addEventListener('click',()=>{
+    const sel = $('timer-presets').value;
+    if(sel==='custom'){
+      const m=parseInt($('custom-preset').value,10);
+      if(m>0){ timeLeft=duration=m*60; mode='work'; updateUI();}
+    } else {
+      const v=Number(sel);
+      if(!isNaN(v)){ timeLeft=duration=v; mode='work'; updateUI();}
     }
     startPause();
   });
-  $('skip-button').addEventListener('click', () => nextSess(false));
+  $('skip-button').addEventListener('click',()=>nextSession(false));
+  updateUI();
 
-  updUI();
-
-
-  // SCHEDULE
-  $('add-schedule').addEventListener('click', () => {
-    const name  = $('session-name').value || 'Unnamed';
-    const start = $('start-time').value;
-    const end   = $('end-time').value;
-    if (!start||!end) return alert('Please set both times');
+  // 3) scheduling
+  $('add-schedule').addEventListener('click',()=>{
+    const nm = $('session-name').value||'Unnamed',
+          st = $('start-time').value,
+          et = $('end-time').value;
+    if(!st||!et) return alert('Set both times');
     const li = document.createElement('li');
-    li.textContent = `${name} — ${start} to ${end}`;
-    $('upcoming-sessions-list').appendChild(li);
+    li.textContent = `${nm} — ${st} to ${et}`;
+    $('upcoming-sessions-list').append(li);
   });
 
-
-  // NOTES
-  $('save-note').addEventListener('click', () => {
+  // 4) notes
+  $('save-note').addEventListener('click',()=>{
     const txt = $('notes-input').value.trim();
-    if (!txt) return alert('Enter some notes');
+    if(!txt) return alert('Enter notes');
     let arr = JSON.parse(localStorage.getItem('notes')||'[]');
     arr.push({ts:Date.now(),note:txt});
-    localStorage.setItem('notes', JSON.stringify(arr));
+    localStorage.setItem('notes',JSON.stringify(arr));
     alert('Saved');
   });
 
+  // 5) stats (basic)
+  function refreshStats(){
+    let arr = JSON.parse(localStorage.getItem('notes')||'[]');
+    $('stats-today').textContent = arr.length;
+    $('stats-week').textContent = arr.length;      // stub
+    $('stats-month').textContent = arr.length;     // stub
+  }
+  refreshStats();
 
-  // SETTINGS: dark mode & cycle count
-  $('dark-mode-toggle').addEventListener('change', e => {
-    document.body.classList.toggle('dark', e.target.checked);
-    localStorage.setItem('darkMode', e.target.checked);
+  // 6) settings & ambient
+  $('dark-mode-toggle').addEventListener('change',e=>{
+    document.body.classList.toggle('dark',e.target.checked);
+    chrome.storage.local.set({darkMode:e.target.checked});
   });
-  $('cycle-count').addEventListener('change', e => {
-    cycleCap = parseInt(e.target.value,10)||4;
-    localStorage.setItem('cycleCount', cycleCap);
+  $('cycle-count').addEventListener('change',e=>{
+    cyclesBeforeLong = parseInt(e.target.value,10)||4;
+    chrome.storage.local.set({cycleCount:cyclesBeforeLong});
   });
 
-  // AMBIENT SOUNDS
-  const amb = {
+  const ambient = {
     rain:   new Audio('sounds/rain.mp3'),
     coffee: new Audio('sounds/coffee.mp3'),
     white:  new Audio('sounds/white.mp3')
   };
-  Object.values(amb).forEach(a => { a.loop=true; a.volume=0.5; });
-  $('ambient-volume').addEventListener('input', e => {
-    Object.values(amb).forEach(a => a.volume = parseFloat(e.target.value));
+  Object.values(ambient).forEach(a=>{a.loop=true; a.volume=0.5});
+  $('ambient-volume').addEventListener('input',e=>{
+    Object.values(ambient).forEach(a=>a.volume=e.target.value);
+    chrome.storage.local.set({ambientVol:e.target.value});
   });
-  $('ambient-select').addEventListener('change', e => {
-    Object.values(amb).forEach(a => { a.pause(); a.currentTime = 0; });
-    const sel = e.target.value;
-    if (amb[sel]) amb[sel].play();
-    localStorage.setItem('ambientSel', sel);
+  $('ambient-select').addEventListener('change',e=>{
+    Object.values(ambient).forEach(a=>{a.pause();a.currentTime=0;});
+    if(ambient[e.target.value]) ambient[e.target.value].play();
+    chrome.storage.local.set({ambientSel:e.target.value});
+  });
+  $('notification-select').addEventListener('change',e=>{
+    chrome.storage.local.set({notifSel:e.target.value});
   });
 
   // restore settings
-  if (localStorage.getItem('darkMode') === 'true') {
-    $('dark-mode-toggle').checked = true;
-    document.body.classList.add('dark');
-  }
-  if (localStorage.getItem('cycleCount')) {
-    $('cycle-count').value = localStorage.getItem('cycleCount');
-    cycleCap = +localStorage.getItem('cycleCount');
-  }
-  if (localStorage.getItem('ambientSel')) {
-    $('ambient-select').value = localStorage.getItem('ambientSel');
-  }
-  if (localStorage.getItem('ambientVol')) {
-    $('ambient-volume').value = +localStorage.getItem('ambientVol');
-    $('ambient-volume').dispatchEvent(new Event('input'));
-  }
+  chrome.storage.local.get(['darkMode','cycleCount','ambientSel','ambientVol'],res=>{
+    if(res.darkMode)      $('dark-mode-toggle').checked=true,document.body.classList.add('dark');
+    if(res.cycleCount)    $('cycle-count').value=res.cycleCount,cyclesBeforeLong=res.cycleCount;
+    if(res.ambientSel)    $('ambient-select').value=res.ambientSel;
+    if(res.ambientVol!=null){
+      $('ambient-volume').value=res.ambientVol;
+      $('ambient-volume').dispatchEvent(new Event('input'));
+    }
+  });
 });
