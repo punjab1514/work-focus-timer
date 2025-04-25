@@ -1,38 +1,29 @@
-const CACHE = 'focus-timer-v1';
-const assets = [
+const CACHE = 'focus-v1';
+const ASSETS = [
   './',
   './index.html',
-  './timer.html',
-  './schedule.html',
-  './stats.html',
-  './notes.html',
-  './settings.html',
   './styles.css',
   './popup.js',
-  './manifest.webmanifest',
-  './icons/icon16.png',
-  './icons/icon48.png',
-  './icons/icon128.png',
+  './icons/timer.svg',
+  './icons/calendar.svg',
+  './icons/stats.svg',
+  './icons/notes.svg',
+  './icons/settings.svg',
   './sounds/rain.mp3',
   './sounds/coffee.mp3',
   './sounds/white.mp3',
-  './sounds/notification.mp3'
+  './sounds/notification.mp3',
+  './manifest.webmanifest'
 ];
 
 self.addEventListener('install', evt => {
   evt.waitUntil(
-    caches.open(CACHE)
-      .then(cache => cache.addAll(assets))
+    caches.open(CACHE).then(cache => cache.addAll(ASSETS))
   );
-});
-
-self.addEventListener('activate', evt => {
-  // (optional) clean up old caches here
 });
 
 self.addEventListener('fetch', evt => {
   evt.respondWith(
-    caches.match(evt.request)
-      .then(cached => cached || fetch(evt.request))
+    caches.match(evt.request).then(res => res || fetch(evt.request))
   );
 });
