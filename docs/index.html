@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Work Focus Timer</title>
   <link href="styles.css" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
 </head>
 <body>
   <div class="app-container">
-    <!-- top nav -->
+    <!-- TOP NAV -->
     <nav class="top-nav">
       <button class="tab-btn active" data-panel="timer"><img src="icons/timer.svg"   alt="Timer"/></button>
       <button class="tab-btn"        data-panel="schedule"><img src="icons/calendar.svg"alt="Schedule"/></button>
@@ -18,7 +18,7 @@
       <button class="tab-btn"        data-panel="settings"><img src="icons/settings.svg"alt="Settings"/></button>
     </nav>
 
-    <!-- timer panel -->
+    <!-- PANELS -->
     <section id="timer"    class="panel card active">
       <h2>My Session</h2>
       <div class="ring-container">
@@ -40,7 +40,6 @@
       </div>
     </section>
 
-    <!-- schedule panel -->
     <section id="schedule" class="panel card">
       <h2>Schedule</h2>
       <input id="session-name" type="text" placeholder="Session name"/>
@@ -52,7 +51,6 @@
       <ul id="upcoming-sessions-list" class="upcoming-list"></ul>
     </section>
 
-    <!-- stats panel -->
     <section id="stats"    class="panel card">
       <h2>Productivity Insights</h2>
       <div class="stats-grid">
@@ -62,14 +60,12 @@
       </div>
     </section>
 
-    <!-- notes panel -->
     <section id="notes"    class="panel card">
       <h2>Session Notes</h2>
       <textarea id="notes-input" placeholder="Type your notes…"></textarea>
       <button id="save-note" class="btn-secondary">Save Note</button>
     </section>
 
-    <!-- settings panel -->
     <section id="settings" class="panel card">
       <h2>Settings</h2>
       <label><input id="dark-mode-toggle" type="checkbox"/> Dark Mode</label>
