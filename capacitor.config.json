@@ -1,0 +1,10 @@
+{
+  "appId": "com.yourcompany.workfocustimer",
+  "appName": "Work Focus Timer",
+  "webDir": "docs",
+  "bundledWebRuntime": false,
+  "server": {
+    "url": "",
+    "cleartext": true
+  }
+}
